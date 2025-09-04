@@ -1,0 +1,511 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>热点新闻分析</title>
+        <style>
+            * { box-sizing: border-box; }
+            body { 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+                margin: 0; 
+                padding: 16px; 
+                background: #fafafa;
+                color: #333;
+                line-height: 1.5;
+            }
+            
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            }
+            
+            .header {
+                background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+                color: white;
+                padding: 32px 24px;
+                text-align: center;
+            }
+            
+            .header-title {
+                font-size: 22px;
+                font-weight: 700;
+                margin: 0 0 20px 0;
+            }
+            
+            .header-info {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                font-size: 14px;
+                opacity: 0.95;
+            }
+            
+            .info-item {
+                text-align: center;
+            }
+            
+            .info-label {
+                display: block;
+                font-size: 12px;
+                opacity: 0.8;
+                margin-bottom: 4px;
+            }
+            
+            .info-value {
+                font-weight: 600;
+                font-size: 16px;
+            }
+            
+            .content {
+                padding: 24px;
+            }
+            
+            .word-group {
+                margin-bottom: 40px;
+            }
+            
+            .word-group:first-child {
+                margin-top: 0;
+            }
+            
+            .word-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 20px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            
+            .word-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .word-name {
+                font-size: 17px;
+                font-weight: 600;
+                color: #1a1a1a;
+            }
+            
+            .word-count {
+                color: #666;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            
+            .word-count.hot { color: #dc2626; font-weight: 600; }
+            .word-count.warm { color: #ea580c; font-weight: 600; }
+            
+            .word-index {
+                color: #999;
+                font-size: 12px;
+            }
+            
+            .news-item {
+                margin-bottom: 20px;
+                padding: 16px 0;
+                border-bottom: 1px solid #f5f5f5;
+                position: relative;
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+            
+            .news-item:last-child {
+                border-bottom: none;
+            }
+            
+            .news-item.new::after {
+                content: "NEW";
+                position: absolute;
+                top: 12px;
+                right: 0;
+                background: #fbbf24;
+                color: #92400e;
+                font-size: 9px;
+                font-weight: 700;
+                padding: 3px 6px;
+                border-radius: 4px;
+                letter-spacing: 0.5px;
+            }
+            
+            .news-number {
+                color: #999;
+                font-size: 13px;
+                font-weight: 600;
+                min-width: 20px;
+                text-align: center;
+                flex-shrink: 0;
+                background: #f8f9fa;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                align-self: flex-start;
+                margin-top: 8px;
+            }
+            
+            .news-content {
+                flex: 1;
+                min-width: 0;
+                padding-right: 40px;
+            }
+            
+            .news-item.new .news-content {
+                padding-right: 50px;
+            }
+            
+            .news-header {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .source-name {
+                color: #666;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            
+            .rank-num {
+                color: #fff;
+                background: #6b7280;
+                font-size: 10px;
+                font-weight: 700;
+                padding: 2px 6px;
+                border-radius: 10px;
+                min-width: 18px;
+                text-align: center;
+            }
+            
+            .rank-num.top { background: #dc2626; }
+            .rank-num.high { background: #ea580c; }
+            
+            .time-info {
+                color: #999;
+                font-size: 11px;
+            }
+            
+            .count-info {
+                color: #059669;
+                font-size: 11px;
+                font-weight: 500;
+            }
+            
+            .news-title {
+                font-size: 15px;
+                line-height: 1.4;
+                color: #1a1a1a;
+                margin: 0;
+            }
+            
+            .news-link {
+                color: #2563eb;
+                text-decoration: none;
+            }
+            
+            .news-link:hover {
+                text-decoration: underline;
+            }
+            
+            .news-link:visited {
+                color: #7c3aed;
+            }
+            
+            .new-section {
+                margin-top: 40px;
+                padding-top: 24px;
+                border-top: 2px solid #f0f0f0;
+            }
+            
+            .new-section-title {
+                color: #1a1a1a;
+                font-size: 16px;
+                font-weight: 600;
+                margin: 0 0 20px 0;
+            }
+            
+            .new-source-group {
+                margin-bottom: 24px;
+            }
+            
+            .new-source-title {
+                color: #666;
+                font-size: 13px;
+                font-weight: 500;
+                margin: 0 0 12px 0;
+                padding-bottom: 6px;
+                border-bottom: 1px solid #f5f5f5;
+            }
+            
+            .new-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px 0;
+                border-bottom: 1px solid #f9f9f9;
+            }
+            
+            .new-item:last-child {
+                border-bottom: none;
+            }
+            
+            .new-item-number {
+                color: #999;
+                font-size: 12px;
+                font-weight: 600;
+                min-width: 18px;
+                text-align: center;
+                flex-shrink: 0;
+                background: #f8f9fa;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .new-item-rank {
+                color: #fff;
+                background: #6b7280;
+                font-size: 10px;
+                font-weight: 700;
+                padding: 3px 6px;
+                border-radius: 8px;
+                min-width: 20px;
+                text-align: center;
+                flex-shrink: 0;
+            }
+            
+            .new-item-rank.top { background: #dc2626; }
+            .new-item-rank.high { background: #ea580c; }
+            
+            .new-item-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .new-item-title {
+                font-size: 14px;
+                line-height: 1.4;
+                color: #1a1a1a;
+                margin: 0;
+            }
+            
+            .error-section {
+                background: #fef2f2;
+                border: 1px solid #fecaca;
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 24px;
+            }
+            
+            .error-title {
+                color: #dc2626;
+                font-size: 14px;
+                font-weight: 600;
+                margin: 0 0 8px 0;
+            }
+            
+            .error-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .error-item {
+                color: #991b1b;
+                font-size: 13px;
+                padding: 2px 0;
+                font-family: 'SF Mono', Consolas, monospace;
+            }
+            
+            @media (max-width: 480px) {
+                body { padding: 12px; }
+                .header { padding: 24px 20px; }
+                .content { padding: 20px; }
+                .header-info { grid-template-columns: 1fr; gap: 12px; }
+                .news-header { gap: 6px; }
+                .news-content { padding-right: 45px; }
+                .news-item { gap: 8px; }
+                .new-item { gap: 8px; }
+                .news-number { width: 20px; height: 20px; font-size: 12px; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="header-title">热点新闻分析</div>
+                <div class="header-info">
+                    <div class="info-item">
+                        <span class="info-label">报告类型</span>
+                        <span class="info-value">实时分析</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">新闻总数</span>
+                        <span class="info-value">660 条</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">热点新闻</span>
+                        <span class="info-value">11 条</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">生成时间</span>
+                        <span class="info-value">09-04 13:17</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="error-section">
+                    <div class="error-title">⚠️ 请求失败的平台</div>
+                    <ul class="error-list"><li class="error-item">github-trending</li><li class="error-item">zhihu-realtime</li><li class="error-item">weibo-realtime</li><li class="error-item">douyin-realtime</li><li class="error-item">tieba-hot</li><li class="error-item">toutiao-hot</li><li class="error-item">thepaper-hot</li><li class="error-item">bilibili-hot</li><li class="error-item">baidu-hot</li><li class="error-item">ifeng-hot</li><li class="error-item">sputnik</li><li class="error-item">kaopunews</li><li class="error-item">fabucaijing</li>
+                    </ul>
+                </div>
+                <div class="word-group">
+                    <div class="word-header">
+                        <div class="word-info">
+                            <div class="word-name"># 1️⃣ 核心升学词（全国通用） 高考 中考 小升初 幼升小 升学 提分 录取 分数线 志愿填报 大学 名校</div>
+                            <div class="word-count warm">6 条</div>
+                        </div>
+                        <div class="word-index">1/2</div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">1</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">酷安</span><span class="rank-num top">3</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.coolapk.com/feed/67026827" target="_blank" class="news-link">#初恋这件小事#  #我在酷安晒女友# 初恋，我们长跑马上快6年，从高中到大学毕业。昨晚我鼓起勇气说分手了。本来说国庆谈订婚的事情，以前没谈这些事情都还好，现在谈到这个事情她就开始犹豫不决了。昨晚说出来之后，一开始没反应，到情不自禁掉眼泪，心里面特别不是滋味。所以老哥们，我做的对吗。</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">2</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">参考消息</span><span class="rank-num high">5</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://ckxxapp.ckxx.net/pages/2025/09/04/38da939e646d4f2fb3260a6c0919a95c.html" target="_blank" class="news-link">哈佛大学肯尼迪学院教授拉纳·米特：中国在二战中的贡献应该更多被看到</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">3</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">财联社热门</span><span class="rank-num ">9</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.cls.cn/detail/2135114" target="_blank" class="news-link">特朗普政府冻结哈佛大学超20亿资金被裁定非法 | 环球市场</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">4</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">凤凰网</span><span class="rank-num ">12</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://news.ifeng.com/c/8mM65ovj6PE" target="_blank" class="news-link">台湾大学教授苑举正泪洒阅兵现场，说要做堂堂正正的中国人</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">5</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">Solidot</span><span class="rank-num ">12</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.solidot.org/story?sid=82208" target="_blank" class="news-link">美国 85% 的大学生报告使用 AI 完成作业 </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">6</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">酷安</span><span class="rank-num ">15</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.coolapk.com/feed/67035084" target="_blank" class="news-link">捞女一个 茶楼认识的 之前还说做我对象来着转头就跟别的人谈了挺搞笑的[受虐滑稽][牛啤]虽然说就没正眼看过她自己也有对象 但确实挺逆天的 好像是东华理工大学大一新生 反正挺炸裂的</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="word-group">
+                    <div class="word-header">
+                        <div class="word-info">
+                            <div class="word-name"># 5️⃣ 语言考试 雅思 托福 多邻国 SAT ACT GRE GMAT 英语提分</div>
+                            <div class="word-count warm">5 条</div>
+                        </div>
+                        <div class="word-index">2/2</div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">1</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">MKTNews</span><span class="rank-num top">2</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://mktnews.net/flashDetail.html?id=019912cd-0f72-799d-bd73-23188978680d" target="_blank" class="news-link">【Ukraine’s Parliament Backs Crypto Legalization, Taxation Bill in First Reading: Cointelegraph】Ukraine’s parliament, the Verkhovna Rada, passed the first reading of a bill to legalize and tax cryptocurrency with 246 votes in favor, as announced by lawmaker Yaroslav Zhelezniak. The proposed legislation includes an 18% income tax and a 5% military tax on digital asset profits, alongside a preferential 5% tax rate for fiat conversions during the first year. The bill aligns with Ukraine&#x27;s financial regulator’s April recommendation, exempting crypto-to-crypto and stablecoin transactions, potentially positioning the country closer to crypto-friendly jurisdictions.</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">2</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">IT之家</span><span class="rank-num top">3</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.ithome.com/0/880/317.htm" target="_blank" class="news-link">银昕推出四盘位 SATA 硬盘盒 TS434U：支持热插拔，USB-C 接口</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">3</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">稀土掘金</span><span class="rank-num top">3</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://juejin.cn/post/7544237599172542473" target="_blank" class="news-link">我为什么放弃了 React（或许你也该试试）🔥</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">4</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">MKTNews</span><span class="rank-num high">5</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://mktnews.net/flashDetail.html?id=01991257-b8d4-799d-bd71-9522007dc508" target="_blank" class="news-link">【China Weighs Curbs on Stock Speculation to Foster Steady Gains】China’s financial regulators are weighing a series of cooling measures for the stock market as they become increasingly concerned about the speed of a $1.2 trillion rally that began in August, according to sources familiar with the matter. Among the proposals discussed with top policymakers in recent weeks are the removal of certain short selling restrictions and the introduction of options to curb speculative trading, due to worries that a sudden market reversal could cause significant losses for retail investors. The Shanghai Composite Index has reached its highest level in a decade, while the CSI 300 Index has climbed more than 20% from its lowest point this year. Regulators have already mobilized financial institutions to support market stability, instructing banks to investigate the illegal use of credit funds for stock investments after discovering that some investors were using money borrowed from online credit platforms. Brokerages have been ordered not to aggressively promote their 24-hour services for opening new stock accounts, as data shows retail investors opened 166% more new accounts in August compared to the same period last year. Additionally, social media platforms have been warned against heavily publicizing bullish market content, margin trading milestones, and the shift of bank deposits into stocks to avoid attracting inexperienced investors. Authorities have stated that any violations or illegal stock recommendations will face severe punishment. The China Securities Regulatory Commission (CSRC) has not commented on the potential measures.</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">5</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">MKTNews</span><span class="rank-num ">10</span><span class="time-info">13时17分</span>
+                            </div>
+                            <div class="news-title"><a href="https://mktnews.net/flashDetail.html?id=01991056-5066-799d-bd6a-8d6d716cb7ca" target="_blank" class="news-link">THE CTFC RECOMMENDS NO ACTION ON POLYMARKET, GIVING IT THE GREEN LIGHT TO CONTINUE WITH ITS EVENT-BASED SWAPS: SYNOPTIC</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    
