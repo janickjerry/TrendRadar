@@ -1,0 +1,608 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>热点新闻分析</title>
+        <style>
+            * { box-sizing: border-box; }
+            body { 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+                margin: 0; 
+                padding: 16px; 
+                background: #fafafa;
+                color: #333;
+                line-height: 1.5;
+            }
+            
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            }
+            
+            .header {
+                background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+                color: white;
+                padding: 32px 24px;
+                text-align: center;
+            }
+            
+            .header-title {
+                font-size: 22px;
+                font-weight: 700;
+                margin: 0 0 20px 0;
+            }
+            
+            .header-info {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                font-size: 14px;
+                opacity: 0.95;
+            }
+            
+            .info-item {
+                text-align: center;
+            }
+            
+            .info-label {
+                display: block;
+                font-size: 12px;
+                opacity: 0.8;
+                margin-bottom: 4px;
+            }
+            
+            .info-value {
+                font-weight: 600;
+                font-size: 16px;
+            }
+            
+            .content {
+                padding: 24px;
+            }
+            
+            .word-group {
+                margin-bottom: 40px;
+            }
+            
+            .word-group:first-child {
+                margin-top: 0;
+            }
+            
+            .word-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 20px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            
+            .word-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .word-name {
+                font-size: 17px;
+                font-weight: 600;
+                color: #1a1a1a;
+            }
+            
+            .word-count {
+                color: #666;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            
+            .word-count.hot { color: #dc2626; font-weight: 600; }
+            .word-count.warm { color: #ea580c; font-weight: 600; }
+            
+            .word-index {
+                color: #999;
+                font-size: 12px;
+            }
+            
+            .news-item {
+                margin-bottom: 20px;
+                padding: 16px 0;
+                border-bottom: 1px solid #f5f5f5;
+                position: relative;
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+            
+            .news-item:last-child {
+                border-bottom: none;
+            }
+            
+            .news-item.new::after {
+                content: "NEW";
+                position: absolute;
+                top: 12px;
+                right: 0;
+                background: #fbbf24;
+                color: #92400e;
+                font-size: 9px;
+                font-weight: 700;
+                padding: 3px 6px;
+                border-radius: 4px;
+                letter-spacing: 0.5px;
+            }
+            
+            .news-number {
+                color: #999;
+                font-size: 13px;
+                font-weight: 600;
+                min-width: 20px;
+                text-align: center;
+                flex-shrink: 0;
+                background: #f8f9fa;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                align-self: flex-start;
+                margin-top: 8px;
+            }
+            
+            .news-content {
+                flex: 1;
+                min-width: 0;
+                padding-right: 40px;
+            }
+            
+            .news-item.new .news-content {
+                padding-right: 50px;
+            }
+            
+            .news-header {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .source-name {
+                color: #666;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            
+            .rank-num {
+                color: #fff;
+                background: #6b7280;
+                font-size: 10px;
+                font-weight: 700;
+                padding: 2px 6px;
+                border-radius: 10px;
+                min-width: 18px;
+                text-align: center;
+            }
+            
+            .rank-num.top { background: #dc2626; }
+            .rank-num.high { background: #ea580c; }
+            
+            .time-info {
+                color: #999;
+                font-size: 11px;
+            }
+            
+            .count-info {
+                color: #059669;
+                font-size: 11px;
+                font-weight: 500;
+            }
+            
+            .news-title {
+                font-size: 15px;
+                line-height: 1.4;
+                color: #1a1a1a;
+                margin: 0;
+            }
+            
+            .news-link {
+                color: #2563eb;
+                text-decoration: none;
+            }
+            
+            .news-link:hover {
+                text-decoration: underline;
+            }
+            
+            .news-link:visited {
+                color: #7c3aed;
+            }
+            
+            .new-section {
+                margin-top: 40px;
+                padding-top: 24px;
+                border-top: 2px solid #f0f0f0;
+            }
+            
+            .new-section-title {
+                color: #1a1a1a;
+                font-size: 16px;
+                font-weight: 600;
+                margin: 0 0 20px 0;
+            }
+            
+            .new-source-group {
+                margin-bottom: 24px;
+            }
+            
+            .new-source-title {
+                color: #666;
+                font-size: 13px;
+                font-weight: 500;
+                margin: 0 0 12px 0;
+                padding-bottom: 6px;
+                border-bottom: 1px solid #f5f5f5;
+            }
+            
+            .new-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px 0;
+                border-bottom: 1px solid #f9f9f9;
+            }
+            
+            .new-item:last-child {
+                border-bottom: none;
+            }
+            
+            .new-item-number {
+                color: #999;
+                font-size: 12px;
+                font-weight: 600;
+                min-width: 18px;
+                text-align: center;
+                flex-shrink: 0;
+                background: #f8f9fa;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .new-item-rank {
+                color: #fff;
+                background: #6b7280;
+                font-size: 10px;
+                font-weight: 700;
+                padding: 3px 6px;
+                border-radius: 8px;
+                min-width: 20px;
+                text-align: center;
+                flex-shrink: 0;
+            }
+            
+            .new-item-rank.top { background: #dc2626; }
+            .new-item-rank.high { background: #ea580c; }
+            
+            .new-item-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .new-item-title {
+                font-size: 14px;
+                line-height: 1.4;
+                color: #1a1a1a;
+                margin: 0;
+            }
+            
+            .error-section {
+                background: #fef2f2;
+                border: 1px solid #fecaca;
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 24px;
+            }
+            
+            .error-title {
+                color: #dc2626;
+                font-size: 14px;
+                font-weight: 600;
+                margin: 0 0 8px 0;
+            }
+            
+            .error-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .error-item {
+                color: #991b1b;
+                font-size: 13px;
+                padding: 2px 0;
+                font-family: 'SF Mono', Consolas, monospace;
+            }
+            
+            @media (max-width: 480px) {
+                body { padding: 12px; }
+                .header { padding: 24px 20px; }
+                .content { padding: 20px; }
+                .header-info { grid-template-columns: 1fr; gap: 12px; }
+                .news-header { gap: 6px; }
+                .news-content { padding-right: 45px; }
+                .news-item { gap: 8px; }
+                .new-item { gap: 8px; }
+                .news-number { width: 20px; height: 20px; font-size: 12px; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="header-title">热点新闻分析</div>
+                <div class="header-info">
+                    <div class="info-item">
+                        <span class="info-label">报告类型</span>
+                        <span class="info-value">实时分析</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">新闻总数</span>
+                        <span class="info-value">658 条</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">热点新闻</span>
+                        <span class="info-value">14 条</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">生成时间</span>
+                        <span class="info-value">09-17 17:20</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="error-section">
+                    <div class="error-title">⚠️ 请求失败的平台</div>
+                    <ul class="error-list"><li class="error-item">github-trending</li><li class="error-item">zhihu-realtime</li><li class="error-item">weibo-realtime</li><li class="error-item">douyin-realtime</li><li class="error-item">tieba-hot</li><li class="error-item">toutiao-hot</li><li class="error-item">thepaper-hot</li><li class="error-item">bilibili-hot</li><li class="error-item">baidu-hot</li><li class="error-item">ifeng-hot</li><li class="error-item">sputnik</li><li class="error-item">kaopunews</li><li class="error-item">fabucaijing</li>
+                    </ul>
+                </div>
+                <div class="word-group">
+                    <div class="word-header">
+                        <div class="word-info">
+                            <div class="word-name"># 1️⃣ 核心升学词（全国通用） 高考 中考 小升初 幼升小 升学 提分 录取 分数线 志愿填报 大学 名校</div>
+                            <div class="word-count warm">7 条</div>
+                        </div>
+                        <div class="word-index">1/3</div>
+                    </div>
+                    <div class="news-item new">
+                        <div class="news-number">1</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">联合早报</span><span class="rank-num top">1</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.zaochenbao.com/news/Chronicles/202509/1752518.html" target="_blank" class="news-link">北京大学副校长任羽中主动投案</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item new">
+                        <div class="news-number">2</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">百度热搜</span><span class="rank-num high">5</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.baidu.com/s?wd=%E5%8C%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E5%89%AF%E6%A0%A1%E9%95%BF%E4%BB%BB%E7%BE%BD%E4%B8%AD%E8%A2%AB%E6%9F%A5" target="_blank" class="news-link">北京大学副校长任羽中被查</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item new">
+                        <div class="news-number">3</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">IT之家</span><span class="rank-num ">11</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.ithome.com/0/883/671.htm" target="_blank" class="news-link">马斯克的 xAI 数据标注团队大裁员，入职不久的大学生接手 Grok 模型训练重任</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">4</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">牛客</span><span class="rank-num ">15</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.nowcoder.com/discuss/797472599272878080" target="_blank" class="news-link">真有人600分报民办大学嘛？</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">5</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">牛客</span><span class="rank-num ">16</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.nowcoder.com/discuss/797470332582895616" target="_blank" class="news-link">毕业保底25w年薪，福耀大学还是太超前了</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">6</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">澎湃新闻</span><span class="rank-num ">18</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://m.thepaper.cn/newsDetail_forward_31620778" target="_blank" class="news-link">多名男性留学生混住女生宿舍楼？重庆理工大学通报</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item new">
+                        <div class="news-number">7</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">今日头条</span><span class="rank-num ">23</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.toutiao.com/trending/7550498795579506729/" target="_blank" class="news-link">浙江奉化34名大学生新兵启程入伍</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="word-group">
+                    <div class="word-header">
+                        <div class="word-info">
+                            <div class="word-name"># 5️⃣ 语言考试 雅思 托福 多邻国 SAT ACT GRE GMAT 英语提分</div>
+                            <div class="word-count warm">6 条</div>
+                        </div>
+                        <div class="word-index">2/3</div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">1</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">MKTNews</span><span class="rank-num top">2</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://mktnews.net/flashDetail.html?id=01995696-a24b-755e-85d3-dcde993d3032" target="_blank" class="news-link">【Fed Set to Resume Its Path Towards 3%: ING】ING anticipates the Fed will cut rates 25bp tonight and deliver 75bp total cuts through March 2026, as labor market weakness now outweighs inflation concerns. After holding rates steady through 2025 following last year&#x27;s 100bp cut, the Fed&#x27;s stance shifted at July&#x27;s FOMC meeting when officials acknowledged a weakening jobs market justified policy loosening, with Chair Powell confirming at Jackson Hole that economic changes may soon &quot;warrant&quot; lower rates. Labor market deterioration is the key driver, as Q2&#x27;s 3.3% GDP growth masked consumer weakness with spending plateauing due to household concerns over tariffs, cooling employment, and wealth volatility. The latest Fed Beige Book confirmed this narrative, reporting little economic activity change and flat-to-declining consumer spending across districts, with 11 of 12 regions showing no hiring over seven weeks. While inflation remains above target due to tariff impacts, the Fed recognizes it needs to move policy closer to neutral without waiting for full confirmation in data. Though a 50bp cut remains possible given jobs deterioration, majority of members caution regarding tariff-induced inflation makes 25bp the most likely outcome, aligning with market expectations.</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">2</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">MKTNews</span><span class="rank-num top">3</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://mktnews.net/flashDetail.html?id=01995689-2257-755e-85d3-c5fc1feccdbc" target="_blank" class="news-link">【🚨Fed Decision Showdown: JPMorgan Maps Out Scenarios That Could Send Stocks Soaring — or Crashing 5%】JPMorgan has mapped out how stocks could swing depending on how the Fed moves this week. Here’s the breakdown:&lt;br/&gt;&lt;b&gt;1. The “Dovish Cut” — Most Likely (47.5% chance)&lt;/b&gt;&lt;br/&gt;Fed slashes rates by 25 bps and issue dovish language.&lt;br/&gt;Immediate reaction: S&amp;P 500 pops +1% to ~6,650.&lt;br/&gt;But beware: JPMorgan warns a &lt;b&gt;sell-the-news slide&lt;/b&gt; could drag stocks down as much as &lt;b&gt;5%&lt;/b&gt; in the weeks ahead.&lt;br/&gt;Buying opportunities if that happens:&lt;br/&gt;&lt;b&gt;Mega-cap tech &amp; AI names&lt;/b&gt; — JPMorgan stays overweight.&lt;br/&gt;&lt;b&gt;Utilities&lt;/b&gt; — poised to benefit if rate expectations and 10Y yields fall.&lt;br/&gt;&lt;b&gt;2. The “Hawkish Cut” — Second Likeliest (40% chance)&lt;/b&gt;&lt;br/&gt;Fed delivers the expected 25 bps cut but signals hawkish concerns.&lt;br/&gt;S&amp;P 500 likely stalls or dips -0.5%.&lt;br/&gt;Powell could hint that the&lt;b&gt; job market is now a bigger worry than inflation&lt;/b&gt;, undercutting the rally.&lt;br/&gt;&lt;b&gt;3. The “Shock and Awe” Scenarios — Low Odds, High Volatility (11.5% chance)&lt;/b&gt;&lt;br/&gt;&lt;b&gt;No cut (4%)&lt;/b&gt;: Stocks sink 1%-2%, pushing the S&amp;P 500 toward 6,450.&lt;br/&gt;&lt;b&gt;Jumbo cut of 50 bps (7.5%)&lt;/b&gt;: Market chaos — S&amp;P 500 could&lt;b&gt; swing ±1.5%&lt;/b&gt; depending on how investors read the move.</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">3</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">MKTNews</span><span class="rank-num ">8</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://mktnews.net/flashDetail.html?id=019952d0-aecf-799d-be05-8439f67ec3dd" target="_blank" class="news-link">【Fed Could Continue Cutting Rates in 2026, 2027: Credit Mutuel Asset Management】The Federal Reserve is expected to begin a cycle of interest-rate cuts this week which could continue into 2027, Credit Mutuel Asset Management&#x27;s Francois Rimeu says in a note. &quot;Slowing activity and labor market weakness argue for greater monetary easing than anticipated in June, leading to a lower terminal rate by 2027,&quot; the senior strategist says. Beyond an anticipated 25-basis-point cut this week, Credit Mutuel expects another reduction this year, two further cuts in 2026 and another cut to 3.1% in 2027, close to the long-term rate of 3%, he says. For 2028, Credit Mutuel expects stable rates. U.S. money markets currently price in almost six rate cuts by the end of next year, data show.</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">4</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">MKTNews</span><span class="rank-num ">9</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://mktnews.net/flashDetail.html?id=019950ec-6ff3-799d-bdff-0238341a68db" target="_blank" class="news-link">【Analysts Split on Cut Size Ahead of September FOMC Meeting】&lt;b&gt;Thierry Wizman (Macquarie)&lt;/b&gt;: Fed will balance downside risks to employment without signaling a long string of cuts.&lt;br/&gt;&lt;b&gt;Lon Erickson (Thornburg):&lt;/b&gt; Unlikely to see another 50-bp cut this year; inflation remains the wild card.&lt;br/&gt;&lt;b&gt;Samuel Tombs (Pantheon Macroeconomics)&lt;/b&gt;: Predicts a possible three-way split among governors, with some voting for a 50-bp cut, a majority for a smaller cut, and a few for no change.&lt;br/&gt;&lt;b&gt;Jim Caron (Morgan Stanley) and Michael Feroli (JPMorgan)&lt;/b&gt;: Fed will likely choose a smaller, measured cut rather than aggressive action.&lt;br/&gt;&lt;b&gt;Claudia Sahm (New Century Advisors)&lt;/b&gt;: Cut expected due to weak employment rather than favorable inflation; still sees inflation as “too firm.”&lt;br/&gt;&lt;b&gt;Brian Buetel (UBS Wealth Management)&lt;/b&gt;: Forecasts a 100-bp cumulative cut over the next four meetings through January 2026.&lt;br/&gt;&lt;b&gt;James Bullard (former St. Louis Fed)&lt;/b&gt;: Supports a 25-bp cut and signals further easing, noting tariffs are likely a temporary inflation influence.</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item new">
+                        <div class="news-number">5</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">Hacker News</span><span class="rank-num ">17</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://news.ycombinator.com/item?id=45247259" target="_blank" class="news-link">Samsung 870 QVO 4TB SATA SSD-s: how are they doing after 4 years of use?</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">6</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">Hacker News</span><span class="rank-num ">20</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://news.ycombinator.com/item?id=45232940" target="_blank" class="news-link">CubeSats are fascinating learning tools for space</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="word-group">
+                    <div class="word-header">
+                        <div class="word-info">
+                            <div class="word-name"># 2️⃣ 学习力 &amp; 方法 学习力 学习方法 学习习惯 AI伴学 学习测评 学习效率 时间管理 记忆方法 刷题技巧</div>
+                            <div class="word-count ">1 条</div>
+                        </div>
+                        <div class="word-index">3/3</div>
+                    </div>
+                    <div class="news-item ">
+                        <div class="news-number">1</div>
+                        <div class="news-content">
+                            <div class="news-header">
+                                <span class="source-name">虫部落</span><span class="rank-num ">21</span><span class="time-info">17时20分</span>
+                            </div>
+                            <div class="news-title"><a href="https://www.chongbuluo.com/thread-22941-1-1.html" target="_blank" class="news-link">如何重拾学习力？</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="new-section">
+                    <div class="new-section-title">本次新增热点 (共 5 条)</div>
+                    <div class="new-source-group">
+                        <div class="new-source-title">今日头条 · 1条</div>
+                        <div class="new-item">
+                            <div class="new-item-number">1</div>
+                            <div class="new-item-rank ">23</div>
+                            <div class="new-item-content">
+                                <div class="new-item-title"><a href="https://www.toutiao.com/trending/7550498795579506729/" target="_blank" class="news-link">浙江奉化34名大学生新兵启程入伍</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="new-source-group">
+                        <div class="new-source-title">百度热搜 · 1条</div>
+                        <div class="new-item">
+                            <div class="new-item-number">1</div>
+                            <div class="new-item-rank high">5</div>
+                            <div class="new-item-content">
+                                <div class="new-item-title"><a href="https://www.baidu.com/s?wd=%E5%8C%97%E4%BA%AC%E5%A4%A7%E5%AD%A6%E5%89%AF%E6%A0%A1%E9%95%BF%E4%BB%BB%E7%BE%BD%E4%B8%AD%E8%A2%AB%E6%9F%A5" target="_blank" class="news-link">北京大学副校长任羽中被查</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="new-source-group">
+                        <div class="new-source-title">IT之家 · 1条</div>
+                        <div class="new-item">
+                            <div class="new-item-number">1</div>
+                            <div class="new-item-rank ">11</div>
+                            <div class="new-item-content">
+                                <div class="new-item-title"><a href="https://www.ithome.com/0/883/671.htm" target="_blank" class="news-link">马斯克的 xAI 数据标注团队大裁员，入职不久的大学生接手 Grok 模型训练重任</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="new-source-group">
+                        <div class="new-source-title">Hacker News · 1条</div>
+                        <div class="new-item">
+                            <div class="new-item-number">1</div>
+                            <div class="new-item-rank ">17</div>
+                            <div class="new-item-content">
+                                <div class="new-item-title"><a href="https://news.ycombinator.com/item?id=45247259" target="_blank" class="news-link">Samsung 870 QVO 4TB SATA SSD-s: how are they doing after 4 years of use?</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="new-source-group">
+                        <div class="new-source-title">联合早报 · 1条</div>
+                        <div class="new-item">
+                            <div class="new-item-number">1</div>
+                            <div class="new-item-rank top">1</div>
+                            <div class="new-item-content">
+                                <div class="new-item-title"><a href="https://www.zaochenbao.com/news/Chronicles/202509/1752518.html" target="_blank" class="news-link">北京大学副校长任羽中主动投案</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    
